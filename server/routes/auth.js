@@ -1,53 +1,42 @@
-import express from "express";
-import bcrypt from "bcrypt";
-import User from "../models/User.js";
+import express from 'express'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import User from '../models/User.js'
 
-const router = express.Router();
+const router = express.Router()
 
-router.post("/register", async (req, res) => {
-  const { username, password, role } = req.body;
+// Register
+router.post('/register', async (req, res) => {
+  const { email, password, role } = req.body
+  try {
+    const existing = await User.findOne({ email })
+    if (existing) return res.status(400).json({ message: 'Email already in use' })
 
-  const hashed = await bcrypt.hash(password, 10);
+    const hashed = await bcrypt.hash(password, 10)
+    const user = await User.create({ email, password: hashed, role: role || 'beginner' })
 
-  const user = await User.create({
-    username,
-    password: hashed,
-    role
-  });
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' })
+    res.status(201).json({ token, user: { id: user._id, email: user.email, role: user.role } })
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' })
+  }
+})
 
-  res.json(user);
-});
+// Login
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body
+  try {
+    const user = await User.findOne({ email: email.toLowerCase().trim() })
+    if (!user) return res.status(400).json({ message: 'Invalid credentials' })
 
-// login post route
-router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+    const match = await bcrypt.compare(password, user.password)
+    if (!match) return res.status(400).json({ message: 'Invalid credentials' })
 
-  const user = await User.findOne({ username });
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' })
+    res.json({ token, user: { id: user._id, email: user.email, role: user.role } })
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' })
+  }
+})
 
-  if (!user) return res.status(400).json({ error: "User not found" });
-
-  const valid = await bcrypt.compare(password, user.password);
-
-  if (!valid) return res.status(400).json({ error: "Invalid password" });
-
-  req.session.user = {
-    id: user._id,
-    role: user.role,
-    username: user.username
-  };
-
-  res.json({ id: user._id, role: user.role });
-});
-
-// logout post route
-router.post("/logout", (req, res) => {
-  req.session.destroy();
-  res.json({ message: "Logged out" });
-});
-
-// get route for current user
-router.get("/me", (req, res) => {
-  res.json(req.session.user || null);
-});
-
-export default router;
+export default router
