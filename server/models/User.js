@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-import mongoose from "mongoose";
-
-const userSchema = new mongoose.Schema({
-  username: { type: String, unique: true },
-  password: String,
-  role: {
-    type: String,
-    enum: ["beginner", "advanced"],
-    default: "beginner"
-  }
-});
-
-export default mongoose.model("User", userSchema);
-=======
 import mongoose from 'mongoose'
 
 const userSchema = new mongoose.Schema({
@@ -23,4 +8,3 @@ const userSchema = new mongoose.Schema({
 })
 
 export default mongoose.model('User', userSchema)
->>>>>>> feat/login

@@ -39,4 +39,20 @@ router.post('/login', async (req, res) => {
   }
 })
 
+// Get current user
+router.get('/me', async (req, res) => {
+  const authHeader = req.headers.authorization
+  if (!authHeader) return res.status(401).json({ message: 'No token' })
+
+  try {
+    const token = authHeader.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const user = await User.findById(decoded.id).select('-password')
+    if (!user) return res.status(404).json({ message: 'User not found' })
+    res.json(user)
+  } catch (err) {
+    res.status(401).json({ message: 'Invalid token' })
+  }
+})
+
 export default router

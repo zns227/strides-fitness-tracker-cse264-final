@@ -11,13 +11,19 @@ function LogWorkout({ onClose, user }) {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    fetch("https://oss.exercisedb.dev/api/v1/exercises?limit=200")
-      .then(res => res.json())
-      .then(data => {
-        setAllExercises(data.data || []);
-        setLoading(false);
-      });
-  }, []);
+      fetch("https://oss.exercisedb.dev/api/v1/exercises?limit=200")
+        .then(res => res.json())
+        .then(data => {
+          console.log("full response:", data)
+          console.log("sample exercise:", data.data?.[0])
+          setAllExercises(data.data || []);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Exercise fetch error:", err)
+          setLoading(false);
+        });
+    }, []);
 
   const handleAddExercise = () => {
     console.log("selectedExercise:", selectedExercise);
@@ -28,11 +34,14 @@ function LogWorkout({ onClose, user }) {
     console.log("exercise object:", exercise);
     if (!exercise) return;
 
+    const bp = exercise.bodyParts?.[0]
+    console.log("bodyPart value:", bp)
+
     setExercises(prev => [
       ...prev,
         {
         name: exercise.name,
-        bodyPart: exercise.bodyParts?.[0] || "unknown",
+        bodyPart: exercise.bodyPart || exercise.bodyParts?.[0] || "unknown",
         sets: sets ? Number(sets) : undefined,
         reps: reps ? Number(reps) : undefined,
         duration: duration ? Number(duration) : undefined
@@ -51,19 +60,22 @@ function LogWorkout({ onClose, user }) {
   };
 
   const handleSubmit = async () => {
-    if (exercises.length === 0) return;
-    setSubmitting(true);
+    if (exercises.length === 0) return
+    setSubmitting(true)
+    const token = localStorage.getItem('token')
 
     await fetch("http://localhost:3000/api/workouts", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify({ exercises })
-    });
+    })
 
-    setSubmitting(false);
-    onClose();
-  };
+    setSubmitting(false)
+    onClose()
+  }
 
   return (
     <div style={overlayStyle}>

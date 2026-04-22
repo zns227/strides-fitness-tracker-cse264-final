@@ -1,20 +1,22 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import '../App.css'
 
-function Login() {
+function Login({ setUser }) {
   const [isRegister, setIsRegister] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState('beginner')
   const [error, setError] = useState('')
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const endpoint = isRegister ? '/auth/register' : '/auth/login'
+    const endpoint = isRegister ? '/register' : '/login'
     const body = isRegister ? { email, password, role } : { email, password }
 
     try {
-      const res = await fetch(`http://localhost:3000${endpoint}`, {
+      const res = await fetch(`http://localhost:3000/api/auth${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
@@ -23,8 +25,8 @@ function Login() {
       if (!res.ok) return setError(data.message)
 
       localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
-      window.location.href = '/dashboard'
+      setUser(data.user)
+      navigate('/dashboard')
     } catch (err) {
       setError('Something went wrong')
     }
@@ -64,7 +66,7 @@ function Login() {
           </button>
         </form>
         <p className="toggle-text">
-          {isRegister ? 'Already have an account?' : "Don't have an account?"}
+          {isRegister ? 'Already have an account?' : "Don't have an account? "}
           <button className="toggle-btn" onClick={() => { setIsRegister(!isRegister); setError('') }}>
             {isRegister ? ' Log in' : ' Register'}
           </button>

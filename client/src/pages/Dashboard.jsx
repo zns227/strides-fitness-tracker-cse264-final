@@ -26,38 +26,41 @@ function Dashboard() {
   const [showPreviousWorkouts, setShowPreviousWorkouts] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  useEffect(() => {
-    const init = async () => {
-      await fetch("http://localhost:3000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username: "testuser", password: "1234" })
-      });
+  const fetchData = async () => {
+    const token = localStorage.getItem('token')
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
 
+    try {
       const [statsRes, summaryRes, weeklyRes, workoutsRes, userRes] = await Promise.all([
-        fetch("http://localhost:3000/api/dashboard/stats", { credentials: "include" }),
-        fetch("http://localhost:3000/api/dashboard/summary", { credentials: "include" }),
-        fetch("http://localhost:3000/api/dashboard/weekly", { credentials: "include" }),
-        fetch("http://localhost:3000/api/workouts", { credentials: "include" }),
-        fetch("http://localhost:3000/api/auth/me", { credentials: "include" })
-      ]);
+        fetch("http://localhost:3000/api/dashboard/stats", { headers }),
+        fetch("http://localhost:3000/api/dashboard/summary", { headers }),
+        fetch("http://localhost:3000/api/dashboard/weekly", { headers }),
+        fetch("http://localhost:3000/api/workouts", { headers }),
+        fetch("http://localhost:3000/api/auth/me", { headers })
+      ])
 
-      const statsData = await statsRes.json();
-      const summaryData = await summaryRes.json();
-      const weeklyData = await weeklyRes.json();
-      const workoutsData = await workoutsRes.json();
-      const userData = await userRes.json();
+      const statsData = await statsRes.json()
+      const summaryData = await summaryRes.json()
+      const weeklyData = await weeklyRes.json()
+      const workoutsData = await workoutsRes.json()
+      const userData = await userRes.json()
 
-      setStats(statsData.bodyPartStats || {});
-      setSummary(summaryData.totalWorkouts);
-      setWeekly(weeklyData);
-      setWorkouts(workoutsData || []);
-      setUser(userData);
-    };
+      setStats(statsData.bodyPartStats || {})
+      setSummary(summaryData.totalWorkouts)
+      setWeekly(weeklyData)
+      setWorkouts(workoutsData || [])
+      setUser(userData)
+    } catch (err) {
+      console.error('Dashboard fetch error:', err)
+    }
+  }
 
-    init();
-  }, []);
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const allDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -215,7 +218,7 @@ function Dashboard() {
       </div>
 
       {/* closing buttons */}
-      {showLogWorkout && <LogWorkout onClose={() => setShowLogWorkout(false)} user={user} />}
+      {showLogWorkout && <LogWorkout onClose={() => { setShowLogWorkout(false); fetchData(); }} user={user} />}
       {showPreviousWorkouts && <PreviousWorkouts onClose={() => setShowPreviousWorkouts(false)} workouts={workouts} />}
       {showSuggestions && <Suggestions onClose={() => setShowSuggestions(false)} weekly={weekly} user={user} />}
     </div>
