@@ -9,6 +9,7 @@ function LogWorkout({ onClose, user }) {
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
       fetch("https://oss.exercisedb.dev/api/v1/exercises?limit=200")
@@ -70,7 +71,10 @@ function LogWorkout({ onClose, user }) {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify({ exercises })
+      body: JSON.stringify({ 
+        exercises,
+        notes
+      })
     })
 
     setSubmitting(false)
@@ -185,6 +189,19 @@ function LogWorkout({ onClose, user }) {
                 ))}
               </div>
             )}
+
+            {/* Notes ui */}
+            <div style={{ marginBottom: "20px" }}>
+              <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}>
+                Workout Notes
+              </label>
+              <textarea
+                placeholder="How did it go?"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                style={inputStyle}
+              />
+            </div>
 
             <button
               onClick={handleSubmit}
