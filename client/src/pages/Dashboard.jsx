@@ -9,6 +9,8 @@ import {
 } from "chart.js";
 import { useNavigate } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
+import Confetti from 'react-confetti'; 
+import { useWindowSize } from 'react-use';
 import LogWorkout from "./LogWorkout";
 import PreviousWorkouts from "./PreviousWorkouts";
 import Suggestions from "./Suggestions";
@@ -27,44 +29,14 @@ function Dashboard() {
   const [showPreviousWorkouts, setShowPreviousWorkouts] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
+  // confetti states!!!!
+  const [showConfetti, setShowConfetti] = useState(false);
+  const { width, height } = useWindowSize();
+
+
   const navigate = useNavigate()
 
-  const fetchData = async () => {
-    const token = localStorage.getItem('token')
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    }
-
-    try {
-      const [statsRes, summaryRes, weeklyRes, workoutsRes, userRes] = await Promise.all([
-        fetch("http://localhost:3000/api/dashboard/stats", { headers }),
-        fetch("http://localhost:3000/api/dashboard/summary", { headers }),
-        fetch("http://localhost:3000/api/dashboard/weekly", { headers }),
-        fetch("http://localhost:3000/api/workouts", { headers }),
-        fetch("http://localhost:3000/api/auth/me", { headers })
-      ])
-
-      const statsData = await statsRes.json()
-      const summaryData = await summaryRes.json()
-      const weeklyData = await weeklyRes.json()
-      const workoutsData = await workoutsRes.json()
-      const userData = await userRes.json()
-
-      setStats(statsData.bodyPartStats || {})
-      setSummary(summaryData.totalWorkouts)
-      setWeekly(weeklyData)
-      setWorkouts(workoutsData || [])
-      setUser(userData)
-    } catch (err) {
-      console.error('Dashboard fetch error:', err)
-    }
-  }
-
-  useEffect(() => {
-    fetchData()
-  }, [])
-
+  // charts data
   const allDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const bodyParts = [
@@ -96,20 +68,14 @@ function Dashboard() {
 
   const chartData = { labels: allDays, datasets };
 
+  // achievements widget data
   const achievements = [
     { label: "5 Workouts", target: 5, icon: "🥈" },
     { label: "10 Workouts", target: 10, icon: "🏅" },
     { label: "50 Workouts", target: 50, icon: "🏆" }
   ];
 
-  const handleLogout = async () => {
-    await fetch("http://localhost:3000/api/auth/logout", {
-      method: "POST",
-      credentials: "include"
-    });
-    window.location.href = "/login";
-  };
-
+  // quote widget data
   const quotes = [
     "The only bad workout is the one that didn't happen.",
     "The secret of getting ahead is getting started.",
@@ -119,8 +85,71 @@ function Dashboard() {
 
   const todayQuote = quotes[new Date().getDay() % quotes.length];
 
+  const fetchData = async () => {
+    const token = localStorage.getItem('token')
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+
+    try {
+      const [statsRes, summaryRes, weeklyRes, workoutsRes, userRes] = await Promise.all([
+        fetch("http://localhost:3000/api/dashboard/stats", { headers }),
+        fetch("http://localhost:3000/api/dashboard/summary", { headers }),
+        fetch("http://localhost:3000/api/dashboard/weekly", { headers }),
+        fetch("http://localhost:3000/api/workouts", { headers }),
+        fetch("http://localhost:3000/api/auth/me", { headers })
+      ])
+
+      const statsData = await statsRes.json()
+      const summaryData = await summaryRes.json()
+      const weeklyData = await weeklyRes.json()
+      const workoutsData = await workoutsRes.json()
+      const userData = await userRes.json()
+
+      // triggering the confetti if an achievement is reached
+      const isAchievementReached = achievements.some(a => a.target === summaryData.totalWorkouts);
+    
+      if (isAchievementReached) {
+          setShowConfetti(true);
+          setTimeout(() => setShowConfetti(false), 5000); // Stop after 5 seconds
+      }
+
+      setStats(statsData.bodyPartStats || {})
+      setSummary(summaryData.totalWorkouts)
+      setWeekly(weeklyData)
+      setWorkouts(workoutsData || [])
+      setUser(userData)
+    } catch (err) {
+      console.error('Dashboard fetch error:', err)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const handleLogout = async () => {
+    await fetch("http://localhost:3000/api/auth/logout", {
+      method: "POST",
+      credentials: "include"
+    });
+    window.location.href = "/login";
+  };
+
   return (
     <div style={pageStyle}>
+
+      { /* CONFETTI */} 
+      {showConfetti && (
+        <Confetti
+          width={width}
+          height={height}
+          recycle={false} 
+          numberOfPieces={500}
+          gravity={0.2}
+        />
+      )}
 
       {/* HEADER */}
       <div style={headerStyle}>

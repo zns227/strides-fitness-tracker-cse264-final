@@ -136,23 +136,26 @@ function LogWorkout({ onClose, user }) {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
                 <input
                   type="number"
+                  min="0"
                   placeholder="Sets"
                   value={sets}
-                  onChange={e => setSets(e.target.value)}
+                  onChange={e => setSets(Math.max(0, e.target.value))}
                   style={inputStyle}
                 />
                 <input
                   type="number"
+                  min="0"
                   placeholder="Reps"
                   value={reps}
-                  onChange={e => setReps(e.target.value)}
+                  onChange={e => setReps(Math.max(0, e.target.value))}
                   style={inputStyle}
                 />
                 <input
                   type="number"
+                  min="0"
                   placeholder="Duration (min)"
                   value={duration}
-                  onChange={e => setDuration(e.target.value)}
+                  onChange={e => setDuration(Math.max(0, e.target.value))}
                   style={inputStyle}
                 />
               </div>
