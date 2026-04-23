@@ -31,7 +31,7 @@ function Suggestions({ onClose, weekly, user }) {
     <div style={overlayStyle}>
       <div style={modalStyle}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-          <h2 style={{ margin: 0 }}>Suggestions</h2>
+          <h2 style={{ margin: 0, color: "#0f172a" }}>Suggestions</h2>
           <button onClick={onClose} style={closeBtnStyle}>✕</button>
         </div>
 

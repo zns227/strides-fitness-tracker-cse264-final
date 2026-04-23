@@ -85,7 +85,7 @@ function LogWorkout({ onClose, user }) {
     <div style={overlayStyle}>
       <div style={modalStyle}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-          <h2 style={{ margin: 0 }}>Log Workout</h2>
+          <h2 style={{ margin: 0, color: "#0f172a" }}>Log Workout</h2>
           <button onClick={onClose} style={closeBtnStyle}>✕</button>
         </div>
 
@@ -192,7 +192,7 @@ function LogWorkout({ onClose, user }) {
 
             {/* Notes ui */}
             <div style={{ marginBottom: "20px" }}>
-              <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}>
+              <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600, color: "#0f172a" }}>
                 Workout Notes
               </label>
               <textarea
@@ -246,7 +246,10 @@ const inputStyle = {
   border: "1px solid #d1d5db",
   fontSize: "14px",
   width: "100%",
-  boxSizing: "border-box"
+  boxSizing: "border-box",
+  background: "white",
+  color: "#0f172a",
+  fontFamily: "'Inter', 'Segoe UI', sans-serif"
 };
 
 const addBtnStyle = {

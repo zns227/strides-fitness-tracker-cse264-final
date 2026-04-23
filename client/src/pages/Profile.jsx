@@ -96,7 +96,7 @@ function Profile({ user, setUser }) {
           <p style={labelStyle}>Profile</p>
           <h1 style={titleStyle}>{profile.name}</h1>
         </div>
-        <button onClick={() => navigate('/dashboard')} style={backBtnStyle}>Back to Dashboard</button>
+        <button onClick={() => navigate('/dashboard')} style={backBtnStyle}>← Back to Dashboard</button>
       </div>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
         <div style={{
@@ -245,15 +245,15 @@ const titleStyle = {
 }
 
 const backBtnStyle = {
-  padding: '10px 20px',
-  borderRadius: '10px',
-  border: 'none',
-  background: '#0ea5e9',
-  color: 'white',
-  fontSize: '14px',
+  padding: "10px 20px",
+  borderRadius: "10px",
+  border: "none",
+  background: 'linear-gradient(135deg, #0ea5e9, #0284c7',
+  color: "white",
+  fontSize: "14px",
   fontWeight: 600,
-  cursor: 'pointer'
-}
+  cursor: "pointer"
+};
 
 const gridStyle = {
   display: 'grid',
@@ -312,13 +312,16 @@ const formLabelStyle = {
 }
 
 const inputStyle = {
-  width: '100%',
-  padding: '10px',
-  borderRadius: '8px',
-  border: '1px solid #d1d5db',
-  fontSize: '14px',
-  boxSizing: 'border-box'
-}
+  padding: "10px",
+  borderRadius: "8px",
+  border: "1px solid #d1d5db",
+  fontSize: "14px",
+  width: "100%",
+  boxSizing: "border-box",
+  background: "white",
+  color: "#0f172a",
+  fontFamily: "'Inter', 'Segoe UI', sans-serif"
+};
 
 const saveBtnStyle = {
   padding: '10px 24px',

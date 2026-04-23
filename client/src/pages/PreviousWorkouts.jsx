@@ -3,7 +3,7 @@ function PreviousWorkouts({ onClose, workouts }) {
     <div style={overlayStyle}>
       <div style={modalStyle}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-          <h2 style={{ margin: 0 }}>Previous Workouts</h2>
+          <h2 style={{ margin: 0, color: "#0f172a" }}>Previous Workouts</h2>
           <button onClick={onClose} style={closeBtnStyle}>✕</button>
         </div>
 

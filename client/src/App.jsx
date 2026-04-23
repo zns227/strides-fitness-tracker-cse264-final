@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
+import About from './pages/About'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -14,6 +15,7 @@ function App() {
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/" />} />
         <Route path="/profile" element={user ? <Profile user={user} setUser={setUser} /> : <Navigate to="/" />} />
+        <Route path="/about" element={<About />} />
       </Routes>
     </BrowserRouter>
   )
