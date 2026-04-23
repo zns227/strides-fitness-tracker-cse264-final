@@ -7,6 +7,7 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
+import { useNavigate } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
 import LogWorkout from "./LogWorkout";
 import PreviousWorkouts from "./PreviousWorkouts";
@@ -25,6 +26,8 @@ function Dashboard() {
   const [showLogWorkout, setShowLogWorkout] = useState(false);
   const [showPreviousWorkouts, setShowPreviousWorkouts] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const navigate = useNavigate()
 
   const fetchData = async () => {
     const token = localStorage.getItem('token')
@@ -127,7 +130,10 @@ function Dashboard() {
             Welcome back, {user?.name || "user"}!
           </h1>
         </div>
-        <button onClick={handleLogout} style={logoutBtnStyle}>Logout</button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={() => navigate('/profile')} style={{ ...logoutBtnStyle, background: 'linear-gradient(135deg, #0ea5e9, #0284c7)' }}>Profile</button>
+          <button onClick={handleLogout} style={logoutBtnStyle}>Logout</button>
+        </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "3fr 1fr", gap: "20px", alignItems: "start" }}>

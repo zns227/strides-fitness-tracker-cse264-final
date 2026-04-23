@@ -58,4 +58,49 @@ router.get('/me', async (req, res) => {
   }
 })
 
+// update password
+router.put('/password', async (req, res) => {
+  const authHeader = req.headers.authorization
+  if (!authHeader) return res.status(401).json({ message: 'No token' })
+
+  try {
+    const token = authHeader.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const user = await User.findById(decoded.id)
+    if (!user) return res.status(404).json({ message: 'User not found' })
+
+    const { currentPassword, newPassword } = req.body
+    const match = await bcrypt.compare(currentPassword, user.password)
+    if (!match) return res.status(400).json({ message: 'Current password is incorrect' })
+
+    user.password = await bcrypt.hash(newPassword, 10)
+    await user.save()
+    res.json({ message: 'Password updated' })
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' })
+  }
+})
+
+// update role
+router.put('/role', async (req, res) => {
+  const authHeader = req.headers.authorization
+  if (!authHeader) return res.status(401).json({ message: 'No token' })
+
+  try {
+    const token = authHeader.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const user = await User.findById(decoded.id)
+    if (!user) return res.status(404).json({ message: 'User not found' })
+
+    const { role } = req.body
+    if (!['beginner', 'expert'].includes(role)) return res.status(400).json({ message: 'Invalid role' })
+
+    user.role = role
+    await user.save()
+    res.json({ message: 'Role updated', role: user.role })
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' })
+  }
+})
+
 export default router

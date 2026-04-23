@@ -17,6 +17,10 @@ function Login({ setUser }) {
     const endpoint = isRegister ? '/register' : '/login'
     const body = isRegister ? { name, username, email, password, role } : { email, password }
 
+    if (isRegister && password.length < 6) {
+      return setError('Password must be at least 6 characters')
+    }
+    
     try {
       const res = await fetch(`http://localhost:3000/api/auth${endpoint}`, {
         method: 'POST',
