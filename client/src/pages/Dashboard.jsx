@@ -124,7 +124,7 @@ function Dashboard() {
         <div>
           <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8", letterSpacing: "0.05em", textTransform: "uppercase" }}>Dashboard</p>
           <h1 style={{ margin: 0, fontSize: "24px", fontWeight: 700, color: "#0f172a" }}>
-            Welcome back, {user?.username || "user"}!
+            Welcome back, {user?.name || "user"}!
           </h1>
         </div>
         <button onClick={handleLogout} style={logoutBtnStyle}>Logout</button>

@@ -4,6 +4,8 @@ import '../App.css'
 
 function Login({ setUser }) {
   const [isRegister, setIsRegister] = useState(false)
+  const [name, setName] = useState('')
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState('beginner')
@@ -13,7 +15,7 @@ function Login({ setUser }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const endpoint = isRegister ? '/register' : '/login'
-    const body = isRegister ? { email, password, role } : { email, password }
+    const body = isRegister ? { name, username, email, password, role } : { email, password }
 
     try {
       const res = await fetch(`http://localhost:3000/api/auth${endpoint}`, {
@@ -44,6 +46,18 @@ function Login({ setUser }) {
         <h2>{isRegister ? 'Create Account' : 'Welcome Back'}</h2>
         {error && <p className="error">{error}</p>}
         <form onSubmit={handleSubmit}>
+          {isRegister && (
+            <div className="form-group">
+              <label>First Name</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="name" />
+            </div>
+          )}
+          {isRegister && (
+            <div className="form-group">
+              <label>Username</label>
+              <input type="text" value={username} onChange={e => setUsername(e.target.value)} required placeholder="username" />
+            </div>
+          )}
           <div className="form-group">
             <label>Email</label>
             <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="you@example.com" />
@@ -66,7 +80,7 @@ function Login({ setUser }) {
           </button>
         </form>
         <p className="toggle-text">
-          {isRegister ? 'Already have an account?' : "Don't have an account? "}
+          {isRegister ? 'Already have an account? ' : "Don't have an account? "}
           <button className="toggle-btn" onClick={() => { setIsRegister(!isRegister); setError('') }}>
             {isRegister ? ' Log in' : ' Register'}
           </button>
