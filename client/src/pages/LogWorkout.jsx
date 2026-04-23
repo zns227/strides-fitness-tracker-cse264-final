@@ -104,22 +104,33 @@ function LogWorkout({ onClose, user }) {
                     ))}
                 </select>
 
-                {/* GIF PREVIEW FROM EXERCISE DB*/}
-                {selectedExercise && user?.role === "beginner" && (() => {
-                    const exercise = allExercises.find(e => e.name === selectedExercise);
-                    return exercise?.gifUrl ? (
-                        <div style={{ display: "flex", alignItems: "center", gap: "14px", padding: "12px", background: "#f8fafc", borderRadius: "10px" }}>
+                {/* GIF PREVIEW AND INSTRUCTIONS FOR BEGINNERS FROM EXERCISE DB */}
+                {selectedExercise && (() => {
+                  const exercise = allExercises.find(e => e.name === selectedExercise);
+                  return exercise ? (
+                    <div style={{ background: "#f8fafc", borderRadius: "10px", padding: "12px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
                         <img
-                            src={exercise.gifUrl}
-                            alt={exercise.name}
-                            style={{ width: "80px", height: "80px", borderRadius: "8px", objectFit: "cover" }}
+                          src={exercise.gifUrl}
+                          alt={exercise.name}
+                          style={{ width: "80px", height: "80px", borderRadius: "8px", objectFit: "cover", flexShrink: 0 }}
                         />
                         <div>
-                            <p style={{ margin: 0, fontWeight: 600, fontSize: "14px", color: "#0f172a", textTransform: "capitalize" }}>{exercise.name}</p>
-                            <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#64748b", textTransform: "capitalize" }}>{exercise.bodyParts?.[0]}</p>
+                          <p style={{ margin: 0, fontWeight: 600, fontSize: "14px", color: "#0f172a", textTransform: "capitalize" }}>{exercise.name}</p>
+                          <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#64748b", textTransform: "capitalize" }}>{exercise.bodyParts?.[0]}</p>
                         </div>
-                        </div>
-                    ) : null;
+                      </div>
+
+                      {/* instructions for beginners only */}
+                      {user?.role === "beginner" && exercise.instructions?.length > 0 && (
+                        <ol style={{ margin: "12px 0 0", paddingLeft: "18px", fontSize: "13px", color: "#374151", lineHeight: 1.6 }}>
+                          {exercise.instructions.map((step, i) => (
+                            <li key={i} style={{ marginBottom: "4px" }}>{step.replace(/^Step:\d+\s*/i, "")}</li>
+                          ))}
+                        </ol>
+                      )}
+                    </div>
+                  ) : null;
                 })()}
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>

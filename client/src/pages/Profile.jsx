@@ -154,7 +154,7 @@ function Profile({ user, setUser }) {
           </div>
           <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>
             {profile.role === 'beginner'
-              ? 'As a beginner, you see exercise GIF previews when logging workouts.'
+              ? 'As a beginner, you see exercise instructions when logging workouts.'
               : 'As an expert, you have access to advanced features.'}
           </p>
           <button onClick={handleRoleSwitch} style={switchBtnStyle}>
