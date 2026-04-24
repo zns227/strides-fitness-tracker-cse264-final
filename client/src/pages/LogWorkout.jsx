@@ -172,7 +172,7 @@ function LogWorkout({ onClose, user }) {
             {/* ADDED EXERCISES LIST */}
             {exercises.length > 0 && (
               <div style={{ marginBottom: "20px" }}>
-                <h4 style={{ marginBottom: "10px" }}>Exercises in this workout:</h4>
+                <h4 style={{ marginBottom: "10px", color: "#0f172a" }}>Exercises in this workout:</h4>
                 {exercises.map((ex, i) => (
                   <div key={i} style={exerciseRowStyle}>
                     <div>
@@ -280,7 +280,8 @@ const exerciseRowStyle = {
   padding: "10px 12px",
   background: "#f9fafb",
   borderRadius: "8px",
-  marginBottom: "8px"
+  marginBottom: "8px",
+  color: "#0f172a"
 };
 
 const removeBtnStyle = {
