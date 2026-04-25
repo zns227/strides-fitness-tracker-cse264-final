@@ -7,13 +7,14 @@ function AboutDevs() {
     {
       name: "Mary Eisenhard",
       role: "Full Stack Developer",
-      bio: "something",
+      bio: "I am a junior studying computer science and my favorite animal is a duck.",
+      img: "/mary_gym.png"
     },
     {
       name: "Zainab Spall",
       role: "Full Stack Developer",
-      bio: "something",
-      img: "./public/zainab.png"
+      bio: "I am a junior studying computer science and my favorite animal is a cat.",
+      img: "/zainab.png"
     }
   ];
 
@@ -44,6 +45,9 @@ function AboutDevs() {
         ))}
       </div>
 
+      <p style={{ textAlign: 'center', fontSize: '12px', color: '#94a3b8', fontStyle: 'italic', margin: 0 }}>
+        * Profile photos are AI-generated and are not real. *
+      </p>
       <div style={aboutSectionStyle}>
         <h2 style={{ margin: "0 0 12px", fontSize: "22px", fontWeight: 700, color: "#0f172a" }}>About Strides</h2>
         <p style={{ margin: 0, fontSize: "15px", color: "#475569", lineHeight: 1.8 }}>
