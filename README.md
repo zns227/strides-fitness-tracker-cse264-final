@@ -45,21 +45,47 @@ All protected routes use JWT authentication via Bearer tokens.
 
 Strides integrates with the ExerciseDB API (https://oss.exercisedb.dev/docs#description/introduction) to power the exercise picker when logging workouts and the suggestions feature. Each exercise includes a name, body part, animated GIF demonstration, and step-by-step instructions pulled from the API.
 
-## Installation & Setup Instructions (How to install, run, and configure the application)
-
-* Install:
-* Run:
-* Configure:
-
 ## API Keys & Database Setup 
 
-* Connect to project with MongoDB Driver and copy connection string
-* Generate a jwt secret and copy
-
-* In the .env file in server folder:
+* Mongo project invitation sent to djd219@lehigh.edu
+* Create database user under database access section
+* Connect to Final project with MongoDB Driver and copy connection string
+* Generate a jwt secret and copy with this command
 
 ```
-MONGO_URI=
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+* The .env file in server folder:
+
+```
+MONGO_URI=your_mongodb_connection_string
 PORT=3000
-JWT_SECRET=
+JWT_SECRET=your_jwt_secret
 ```
+
+## Installation & Setup Instructions 
+
+* Once MongoDB project is joined, add IP address to IP address access list
+* Clone repository
+* Set up .env in server folder as above
+* Install dependencies with the following:
+  
+```
+cd server
+npm install
+
+cd client
+npm install
+```
+
+* Run with the following:
+
+```
+cd server
+npm run dev
+
+cd client
+npm run dev
+```
+
