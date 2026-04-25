@@ -183,12 +183,47 @@ function Dashboard() {
           </div>
 
           {/* ACTION BUTTONS */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "15px" }}>
-            {[
-              { label: "Log Workout", icon: "➕", onClick: () => setShowLogWorkout(true) },
-              { label: "Previous Workouts", icon: "📋", onClick: () => setShowPreviousWorkouts(true) },
-              { label: "Suggestions", icon: "💡", onClick: () => setShowSuggestions(true) }
-            ].map((btn, i) => (
+          <div style={{ display: "grid", gridTemplateColumns: user?.role === "expert" ? "repeat(4, 1fr)" : "repeat(3, 1fr)", gap: "15px" }}>
+          {[
+            { label: "Log Workout", icon: "+", onClick: () => setShowLogWorkout(true) },
+            { label: "Previous Workouts", icon: "◷", onClick: () => setShowPreviousWorkouts(true) },
+            { label: "Suggestions", icon: "✦", onClick: () => setShowSuggestions(true) },
+            ...(user?.role === "expert" ? [{
+              label: "Export History",
+              icon: "↓",
+              onClick: () => {
+                const token = localStorage.getItem('token')
+                fetch("http://localhost:3000/api/workouts", {
+                  headers: { "Authorization": `Bearer ${token}` }
+                })
+                  .then(res => res.json())
+                  .then(data => {
+                    const rows = [["Date", "Exercise", "Body Part", "Sets", "Reps", "Duration", "Notes"]]
+                    data.forEach(w => {
+                      w.exercises.forEach(ex => {
+                        rows.push([
+                          new Date(w.date).toLocaleDateString(),
+                          ex.name,
+                          ex.bodyPart || "",
+                          ex.sets || "",
+                          ex.reps || "",
+                          ex.duration || ex.time || "",
+                          w.notes || ""
+                        ])
+                      })
+                    })
+                    const csv = rows.map(r => r.join(",")).join("\n")
+                    const blob = new Blob([csv], { type: "text/csv" })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement("a")
+                    a.href = url
+                    a.download = "strides-workout-history.csv"
+                    a.click()
+                    URL.revokeObjectURL(url)
+                  })
+              }
+            }] : [])
+          ].map((btn, i) => (
               <button key={i} onClick={btn.onClick} style={actionBtnStyle}>
                 <span style={{ fontSize: "28px", display: "block", marginBottom: "8px" }}>{btn.icon}</span>
                 {btn.label}

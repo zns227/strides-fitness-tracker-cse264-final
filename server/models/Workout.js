@@ -12,7 +12,7 @@ const workoutSchema = new mongoose.Schema({
         bodyPart: { type: String },
         sets: { type: Number },
         reps: { type: Number },
-        time: { type: Number }
+        duration: { type: Number }
       }
     ],
   date: { type: Date, default: Date.now }
