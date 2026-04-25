@@ -193,7 +193,8 @@ function Contact() {
     border: '1px solid #d1d5db',
     fontSize: '14px',
     boxSizing: 'border-box',
-    fontFamily: 'inherit'
+    fontFamily: 'inherit',
+    background: "white", color: "#94a3b8"
     }
 
     const submitBtnStyle = {

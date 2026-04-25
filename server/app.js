@@ -40,7 +40,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/feedback", feedbackRoutes);
 // test route
 app.get("/", (req, res) => {
-  res.send("Strides API is running 🚀");
+  res.send("Strides API is running");
 });
 
 app.listen(app.get("port"), () => {
