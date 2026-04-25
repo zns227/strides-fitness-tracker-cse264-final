@@ -15,9 +15,24 @@ function PreviousWorkouts({ onClose, workouts }) {
               <p style={{ margin: 0, fontWeight: 700, fontSize: "14px", color: "#0f172a" }}>
                 {new Date(w.date).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
               </p>
-              <p style={{ margin: "4px 0 0", fontSize: "13px", color: "#64748b", textTransform: "capitalize" }}>
-                {w.exercises.map(e => e.name).join(", ")}
-              </p>
+              {w.exercises.map((ex, j) => (
+                <div key={j} style={{ margin: "8px 0", padding: "8px", background: "#f1f5f9", borderRadius: "8px" }}>
+                  <p style={{ margin: 0, fontWeight: 600, fontSize: "13px", color: "#0f172a", textTransform: "capitalize" }}>
+                    {ex.name}
+                    <span style={{ color: "#64748b", fontWeight: 400, marginLeft: "8px" }}>| Target: {ex.bodyPart}</span>
+                  </p>
+                  <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#475569" }}>
+                    {ex.sets && `${ex.sets} sets`}
+                    {ex.reps && ` · ${ex.reps} reps`}
+                    {(ex.duration || ex.time) && ` · ${ex.duration || ex.time} min`}
+                  </p>
+                </div>
+              ))}
+              {w.notes && (
+                <p style={{ margin: "6px 0 0", fontSize: "13px", color: "#475569", fontStyle: "italic" }}>
+                  Notes: {w.notes}
+                </p>
+              )}
             </div>
           ))
         )}
