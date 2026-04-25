@@ -160,8 +160,9 @@ function Dashboard() {
           </h1>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
-          <button onClick={() => navigate('/about')} style={{ ...logoutBtnStyle, background: 'linear-gradient(135deg, #0ea5e9, #0284c7' }}>About</button>
+          <button onClick={() => navigate('/about')} style={{ ...logoutBtnStyle, background: 'linear-gradient(135deg, #6bd028, #6bd028' }}>About</button>
           <button onClick={() => navigate('/profile')} style={{ ...logoutBtnStyle, background: 'linear-gradient(135deg, #0ea5e9, #0284c7)' }}>Profile</button>
+          <button onClick={() => navigate('/contact')} style={{ ...logoutBtnStyle, background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>Feedback</button>
           <button onClick={handleLogout} style={logoutBtnStyle}>Logout</button>
         </div>
       </div>

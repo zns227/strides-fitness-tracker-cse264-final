@@ -117,7 +117,7 @@ function Profile({ user, setUser }) {
 
       <div style={gridStyle}>
         {/* Account Info Card */}
-        <div style={cardStyle}>
+        <div style={{ ...cardStyle, minHeight: '250px' }}>
           <h3 style={cardTitleStyle}>Account Info</h3>
           <div style={infoRowStyle}>
             <span style={infoLabelStyle}>Name</span>
@@ -138,7 +138,7 @@ function Profile({ user, setUser }) {
         </div>
 
         {/* Role Card */}
-        <div style={cardStyle}>
+        <div style={{ ...cardStyle, minHeight: '250px' }}>
           <h3 style={cardTitleStyle}>Fitness Level</h3>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
             <span style={{
@@ -152,10 +152,10 @@ function Profile({ user, setUser }) {
               {profile.role === 'expert' ? 'Expert' : 'Beginner'}
             </span>
           </div>
-          <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>
+          <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px', minHeight: '40px' }}>
             {profile.role === 'beginner'
               ? 'As a beginner, you see exercise instructions when logging workouts.'
-              : 'As an expert, you have access to advanced features.'}
+              : 'As an expert, you also have access to all advanced features and tools.'}
           </p>
           <button onClick={handleRoleSwitch} style={switchBtnStyle}>
             Switch to {profile.role === 'beginner' ? 'Expert' : 'Beginner'}
@@ -214,9 +214,8 @@ function Profile({ user, setUser }) {
 }
 
 const pageStyle = {
-  minHeight: '100vh',
   width: '100%',
-  padding: '28px',
+  padding: '20px',
   background: '#f1f5f9',
   fontFamily: "'Inter', 'Segoe UI', sans-serif",
   boxSizing: 'border-box'

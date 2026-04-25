@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import workoutRoutes from "./routes/workouts.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import connectDB from "./db/mongo.js";
+import feedbackRoutes from './routes/feedback.js'
 
 const app = express();
 
@@ -36,7 +37,7 @@ connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api/workouts", workoutRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-
+app.use("/api/feedback", feedbackRoutes);
 // test route
 app.get("/", (req, res) => {
   res.send("Strides API is running 🚀");
