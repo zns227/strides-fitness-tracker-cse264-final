@@ -7,7 +7,8 @@ const router = express.Router();
 router.post("/", requireAuth, async (req, res) => {
   const workout = await Workout.create({
     userId: req.user.id,
-    exercises: req.body.exercises
+    exercises: req.body.exercises,
+    notes: req.body.notes
   });
   res.json(workout);
 });

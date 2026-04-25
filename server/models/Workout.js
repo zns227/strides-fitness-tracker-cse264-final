@@ -5,6 +5,7 @@ const workoutSchema = new mongoose.Schema({
   name: { type: String, default: 'Workout' }, 
   type: { type: String },
   duration: { type: Number }, // in minutes
+  notes: { type: String },
   exercises: [
       {
         name: { type: String },
