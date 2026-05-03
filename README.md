@@ -6,9 +6,9 @@ Welcome to Strides: Fitness Tracker! With this web application, users can log wo
 
 ## Team Members & Roles
 
-Mary Eisenhard: Full Stack Developer - login page, register page, user profile, feedback form, exporting workout functionality
+Mary Eisenhard (mre227@lehigh.edu): Full Stack Developer - login page, register page, user profile, feedback form, exporting workout functionality
 
-Zainab Spall: Full Stack Developer - backend routes, dashboard functionality, activity and achievement charts, about page
+Zainab Spall (zns227@lehigh.edu): Full Stack Developer - backend routes, dashboard functionality, activity and achievement charts, about page
 
 ## Application Features
 

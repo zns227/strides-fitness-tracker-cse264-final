@@ -1,3 +1,4 @@
+// Achievement model - stores milestones a user has earned
 import mongoose from 'mongoose'
 
 const achievementSchema = new mongoose.Schema({

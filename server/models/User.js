@@ -1,3 +1,4 @@
+// User model - stores account info, password is hashed before saving to the database
 import mongoose from 'mongoose'
 
 const userSchema = new mongoose.Schema({

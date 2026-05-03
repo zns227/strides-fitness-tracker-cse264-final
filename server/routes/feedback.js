@@ -1,3 +1,4 @@
+// feedback route - saves feedback from the contact page to the database
 import express from 'express'
 import Feedback from '../models/Feedback.js'
 

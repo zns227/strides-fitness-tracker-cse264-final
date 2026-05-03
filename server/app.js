@@ -1,3 +1,4 @@
+// server entry point
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
@@ -16,6 +17,7 @@ app.set("port", process.env.PORT || 3000);
 // middleware
 app.use(express.json());
 
+// allows the frontend (localhost:5173) to talk to the backend (localhost:3000)
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true
@@ -38,6 +40,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/workouts", workoutRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/feedback", feedbackRoutes);
+
 // test route
 app.get("/", (req, res) => {
   res.send("Strides API is running");

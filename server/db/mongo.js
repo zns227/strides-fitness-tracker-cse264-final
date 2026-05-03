@@ -1,3 +1,5 @@
+// connects to our MongoDB database using the connection string from .env
+// ref: proj requirement - "Database"
 import mongoose from 'mongoose'
 
 const connectDB = async () => {

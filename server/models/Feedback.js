@@ -1,3 +1,4 @@
+// Feedback model - stores messages submitted from the contact page
 import mongoose from 'mongoose'
 
 const feedbackSchema = new mongoose.Schema({

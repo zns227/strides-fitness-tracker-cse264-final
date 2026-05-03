@@ -1,9 +1,12 @@
+// dashboard routes - stats, summary, suggestions, and weekly chart data
+// proj requirement - "Internal REST API"
 import express from "express";
 import { requireAuth } from "../middleware/auth.js";
 import Workout from "../models/Workout.js";
 
 const router = express.Router();
 
+// get body part stats for the past week
 router.get("/stats", requireAuth, async (req, res) => {
   try {
     const oneWeekAgo = new Date();
@@ -12,6 +15,7 @@ router.get("/stats", requireAuth, async (req, res) => {
       userId: req.user.id,
       date: { $gte: oneWeekAgo }
     });
+    // count how many times each body part was trained
     const stats = {};
     workouts.forEach(w => {
       w.exercises.forEach(ex => {
@@ -25,6 +29,7 @@ router.get("/stats", requireAuth, async (req, res) => {
   }
 });
 
+// get total workout count for the user
 router.get("/summary", requireAuth, async (req, res) => {
   try {
     const count = await Workout.countDocuments({
@@ -37,6 +42,8 @@ router.get("/summary", requireAuth, async (req, res) => {
   }
 });
 
+// get exercise suggestions from ExerciseDB based on a body part
+// proj requirement - "External REST API"
 router.get("/suggestions", async (req, res) => {
   try {
     const { bodyPart } = req.query;
@@ -47,6 +54,7 @@ router.get("/suggestions", async (req, res) => {
     if (!Array.isArray(exercises)) {
       return res.status(500).json({ error: "Unexpected API format", raw: json });
     }
+    // filter by body part and return 6 random exercises
     const filtered = bodyPart
       ? exercises.filter(e => e.bodyParts?.[0]?.toLowerCase() === bodyPart.toLowerCase())
       : exercises;
@@ -58,6 +66,7 @@ router.get("/suggestions", async (req, res) => {
   }
 });
 
+// get weekly workout data grouped by day and body part (used for the chart)
 router.get("/weekly", requireAuth, async (req, res) => {
   try {
     const today = new Date();
