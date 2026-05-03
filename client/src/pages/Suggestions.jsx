@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 
+// Suggestions modal - recommends exercises for body parts you haven't trained this week
+// project requirement - "External REST API" (ExerciseDB)
 function Suggestions({ onClose, weekly, user }) {
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [neglectedPart, setNeglectedPart] = useState("");
 
+  // all the body parts we track
   const allBodyParts = ["chest", "back", "waist", "upper legs", "lower legs", "upper arms", "lower arms", "shoulders", "neck", "cardio"];
 
   useEffect(() => {
-    // figure out which body parts were trained this week
+    // check which body parts were trained this week
     const trainedThisWeek = new Set(
       Object.values(weekly).flatMap(day => Object.keys(day || {}))
     );
@@ -17,6 +20,7 @@ function Suggestions({ onClose, weekly, user }) {
     const untrained = allBodyParts.find(part => !trainedThisWeek.has(part)) || allBodyParts[0];
     setNeglectedPart(untrained);
 
+    // fetch suggestions from our backend which calls ExerciseDB
     fetch(`http://localhost:3000/api/dashboard/suggestions?bodyPart=${encodeURIComponent(untrained)}`, {
       credentials: "include"
     })
@@ -47,6 +51,7 @@ function Suggestions({ onClose, weekly, user }) {
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             {exercises.map((ex, i) => (
               <div key={i} style={exerciseRowStyle}>
+                {/* beginners see the gif preview, experts just see text */}
                 {user?.role === "beginner" && ex.gifUrl && (
                   <img
                     src={ex.gifUrl}
@@ -71,6 +76,7 @@ function Suggestions({ onClose, weekly, user }) {
   );
 }
 
+// styles
 const overlayStyle = {
   position: "fixed",
   inset: 0,

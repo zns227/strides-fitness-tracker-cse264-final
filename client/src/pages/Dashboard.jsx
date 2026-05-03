@@ -9,43 +9,45 @@ import {
 } from "chart.js";
 import { useNavigate } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
-import Confetti from 'react-confetti'; 
+import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 import LogWorkout from "./LogWorkout";
 import PreviousWorkouts from "./PreviousWorkouts";
 import Suggestions from "./Suggestions";
 
+// register the chart.js components we need (required by chart.js)
+// ref: chart.js and react-confetti are our "new library" requirement for the project
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
+// main dashboard page - shows stats, chart, achievements, and action buttons
 function Dashboard() {
+  // state for all the data we fetch from the server
+  // ref: Lecture 18 (React Concepts), Lecture 22 (State)
   const [stats, setStats] = useState({});
   const [summary, setSummary] = useState(0);
   const [workouts, setWorkouts] = useState([]);
   const [weekly, setWeekly] = useState({});
   const [user, setUser] = useState(null);
 
-  // button popups
+  // state for toggling the popup modals
   const [showLogWorkout, setShowLogWorkout] = useState(false);
   const [showPreviousWorkouts, setShowPreviousWorkouts] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // confetti states!!!!
+  // confetti animation state
   const [showConfetti, setShowConfetti] = useState(false);
   const { width, height } = useWindowSize();
-
-
   const navigate = useNavigate()
-
-  // charts data
   const allDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+  // get all unique body parts from the weekly data to build chart datasets
   const bodyParts = [
     ...new Set(
       Object.values(weekly).flatMap(day => Object.keys(day || {}))
     )
   ];
 
-  // full color map — keys match exactly what ExerciseDB returns (lowercase)
+  // color for each body part in the chart - matches what ExerciseDB returns
   const colorMap = {
     "chest": "#ef4444",
     "back": "#3b82f6",
@@ -60,6 +62,7 @@ function Dashboard() {
     "unknown": "#6b7280"
   };
 
+  // build the chart data - one dataset per body part, one bar per day
   const datasets = bodyParts.map(part => ({
     label: part,
     data: allDays.map(day => weekly?.[day]?.[part] || 0),
@@ -68,23 +71,25 @@ function Dashboard() {
 
   const chartData = { labels: allDays, datasets };
 
-  // achievements widget data
+  // achievement milestones
   const achievements = [
     { label: "5 Workouts", target: 5, icon: "🥈" },
     { label: "10 Workouts", target: 10, icon: "🏅" },
     { label: "50 Workouts", target: 50, icon: "🏆" }
   ];
 
-  // quote widget data
+  // rotating daily quote based on the day of the week
   const quotes = [
     "The only bad workout is the one that didn't happen.",
     "The secret of getting ahead is getting started.",
-    "If it doesn’t challenge you, it doesn’t change you.",
+    "If it doesn't challenge you, it doesn't change you.",
     "Start where you are. Use what you have. Do what you can."
   ];
 
   const todayQuote = quotes[new Date().getDay() % quotes.length];
 
+  // fetches all dashboard data from our Express API
+  // ref: fetch + async/await - Lecture 18, Lecture 24
   const fetchData = async () => {
     const token = localStorage.getItem('token')
     const headers = {
@@ -93,6 +98,7 @@ function Dashboard() {
     }
 
     try {
+      // Promise.all lets us make all 5 API calls at the same time instead of one by one
       const [statsRes, summaryRes, weeklyRes, workoutsRes, userRes] = await Promise.all([
         fetch("http://localhost:3000/api/dashboard/stats", { headers }),
         fetch("http://localhost:3000/api/dashboard/summary", { headers }),
@@ -107,14 +113,15 @@ function Dashboard() {
       const workoutsData = await workoutsRes.json()
       const userData = await userRes.json()
 
-      // triggering the confetti if an achievement is reached
+      // check if the user just hit an achievement milestone, if so show confetti
       const isAchievementReached = achievements.some(a => a.target === summaryData.totalWorkouts);
-    
+
       if (isAchievementReached) {
           setShowConfetti(true);
-          setTimeout(() => setShowConfetti(false), 5000); // Stop after 5 seconds
+          setTimeout(() => setShowConfetti(false), 5000);
       }
 
+      // update all the state with the fetched data
       setStats(statsData.bodyPartStats || {})
       setSummary(summaryData.totalWorkouts)
       setWeekly(weeklyData)
@@ -125,10 +132,12 @@ function Dashboard() {
     }
   }
 
+  // runs fetchData once when the component first loads
   useEffect(() => {
     fetchData()
   }, [])
 
+  // logs the user out and redirects to login
   const handleLogout = async () => {
     await fetch("http://localhost:3000/api/auth/logout", {
       method: "POST",
@@ -140,18 +149,18 @@ function Dashboard() {
   return (
     <div style={pageStyle}>
 
-      { /* CONFETTI */} 
+      {/* confetti animation - uses react-confetti library */}
       {showConfetti && (
         <Confetti
           width={width}
           height={height}
-          recycle={false} 
+          recycle={false}
           numberOfPieces={500}
           gravity={0.2}
         />
       )}
 
-      {/* HEADER */}
+      {/* header with nav buttons */}
       <div style={headerStyle}>
         <div>
           <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8", letterSpacing: "0.05em", textTransform: "uppercase" }}>Dashboard</p>
@@ -160,7 +169,7 @@ function Dashboard() {
           </h1>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
-          <button onClick={() => navigate('/about')} style={{ ...logoutBtnStyle, background: 'linear-gradient(135deg, #6bd028, #6bd028' }}>About</button>
+          <button onClick={() => navigate('/about')} style={{ ...logoutBtnStyle, background: 'linear-gradient(135deg, #6bd028, #6bd028)' }}>About</button>
           <button onClick={() => navigate('/profile')} style={{ ...logoutBtnStyle, background: 'linear-gradient(135deg, #0ea5e9, #0284c7)' }}>Profile</button>
           <button onClick={() => navigate('/contact')} style={{ ...logoutBtnStyle, background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>Feedback</button>
           <button onClick={handleLogout} style={logoutBtnStyle}>Logout</button>
@@ -169,10 +178,10 @@ function Dashboard() {
 
       <div style={{ display: "grid", gridTemplateColumns: "3fr 1fr", gap: "20px", alignItems: "start" }}>
 
-        {/* LEFT SIDE */}
+        {/* left column */}
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
-          {/* QUOTE CARD */}
+          {/* daily quote */}
           <div style={quoteCardStyle}>
             <p style={{ margin: 0, fontSize: "13px", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.7 }}>
               Daily Motivation
@@ -182,12 +191,13 @@ function Dashboard() {
             </p>
           </div>
 
-          {/* ACTION BUTTONS */}
+          {/* action buttons - expert users get an extra export button */}
           <div style={{ display: "grid", gridTemplateColumns: user?.role === "expert" ? "repeat(4, 1fr)" : "repeat(3, 1fr)", gap: "15px" }}>
           {[
             { label: "Log Workout", icon: "+", onClick: () => setShowLogWorkout(true) },
             { label: "Previous Workouts", icon: "◷", onClick: () => setShowPreviousWorkouts(true) },
             { label: "Suggestions", icon: "✦", onClick: () => setShowSuggestions(true) },
+            // only add the export button if user is an expert
             ...(user?.role === "expert" ? [{
               label: "Export History",
               icon: "↓",
@@ -198,6 +208,7 @@ function Dashboard() {
                 })
                   .then(res => res.json())
                   .then(data => {
+                    // build CSV rows from workout data
                     const rows = [["Date", "Exercise", "Body Part", "Sets", "Reps", "Duration", "Notes"]]
                     data.forEach(w => {
                       w.exercises.forEach(ex => {
@@ -212,6 +223,7 @@ function Dashboard() {
                         ])
                       })
                     })
+                    // create a downloadable CSV file
                     const csv = rows.map(r => r.join(",")).join("\n")
                     const blob = new Blob([csv], { type: "text/csv" })
                     const url = URL.createObjectURL(blob)
@@ -231,7 +243,7 @@ function Dashboard() {
             ))}
           </div>
 
-          {/* CHART */}
+          {/* weekly activity chart - uses react-chartjs-2 */}
           <div style={cardStyle}>
             <h3 style={cardTitleStyle}>Weekly Activity</h3>
             <Bar
@@ -248,16 +260,16 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
+        {/* right column */}
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
-          {/* TOTAL WORKOUTS STAT */}
+          {/* total workouts count */}
           <div style={{ ...cardStyle, textAlign: "center", background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", color: "white" }}>
             <p style={{ margin: 0, fontSize: "13px", opacity: 0.8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Total Workouts</p>
             <p style={{ margin: "8px 0 0", fontSize: "48px", fontWeight: 800, lineHeight: 1 }}>{summary}</p>
           </div>
 
-          {/* ACHIEVEMENTS */}
+          {/* achievements with progress bars */}
           <div style={cardStyle}>
             <h3 style={cardTitleStyle}>Achievements</h3>
             {achievements.map((a, i) => {
@@ -289,7 +301,7 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* closing buttons */}
+      {/* child components shown as popups - we pass data down as props */}
       {showLogWorkout && <LogWorkout onClose={() => { setShowLogWorkout(false); fetchData(); }} user={user} />}
       {showPreviousWorkouts && <PreviousWorkouts onClose={() => setShowPreviousWorkouts(false)} workouts={workouts} />}
       {showSuggestions && <Suggestions onClose={() => setShowSuggestions(false)} weekly={weekly} user={user} />}
@@ -297,6 +309,7 @@ function Dashboard() {
   );
 }
 
+// styles
 const pageStyle = {
   minHeight: "100vh",
   width: "100%",

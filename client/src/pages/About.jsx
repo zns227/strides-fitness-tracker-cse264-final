@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
 
+// About page - shows team members and project info
 function AboutDevs() {
+  // lets us navigate to other pages when a button is clicked
   const navigate = useNavigate();
 
+  // team member info stored in an array
   const devs = [
     {
       name: "Mary Eisenhard",
@@ -20,15 +23,18 @@ function AboutDevs() {
 
   return (
     <div style={pageStyle}>
+      {/* back button */}
       <div style={headerStyle}>
         <button onClick={() => navigate('/dashboard')} style={backBtnStyle}>← Back to Dashboard</button>
       </div>
 
+      {/* page title */}
       <div style={heroStyle}>
         <h1 style={{ margin: 0, fontSize: "32px", fontWeight: 800, color: "#0f172a" }}>Meet the Team</h1>
         <p style={{ margin: "10px 0 0", color: "#64748b", fontSize: "16px" }}>The people behind Strides</p>
       </div>
 
+      {/* loop through devs array and show a card for each person */}
       <div style={cardsContainer}>
         {devs.map((dev, i) => (
           <div key={i} style={cardStyle}>
@@ -48,6 +54,8 @@ function AboutDevs() {
       <p style={{ textAlign: 'center', fontSize: '12px', color: '#94a3b8', fontStyle: 'italic', margin: 0 }}>
         * Profile photos are AI-generated and are not real. *
       </p>
+
+      {/* about section */}
       <div style={aboutSectionStyle}>
         <h2 style={{ margin: "0 0 12px", fontSize: "22px", fontWeight: 700, color: "#0f172a" }}>About Strides</h2>
         <p style={{ margin: 0, fontSize: "15px", color: "#475569", lineHeight: 1.8 }}>
@@ -57,6 +65,8 @@ function AboutDevs() {
     </div>
   );
 }
+
+// styles kept outside the component so they don't get recreated every time
 
 const pageStyle = {
   minHeight: "100vh",
@@ -119,7 +129,7 @@ const backBtnStyle = {
   padding: "10px 20px",
   borderRadius: "10px",
   border: "none",
-  background: 'linear-gradient(135deg, #0ea5e9, #0284c7',
+  background: "linear-gradient(135deg, #0ea5e9, #0284c7)",
   color: "white",
   fontSize: "14px",
   fontWeight: 600,

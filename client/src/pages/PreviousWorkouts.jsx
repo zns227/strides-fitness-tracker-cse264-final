@@ -1,3 +1,5 @@
+// PreviousWorkouts - shows all past workouts in reverse order (newest first)
+// receives workouts data as a prop from Dashboard
 function PreviousWorkouts({ onClose, workouts }) {
   return (
     <div style={overlayStyle}>
@@ -7,6 +9,7 @@ function PreviousWorkouts({ onClose, workouts }) {
           <button onClick={onClose} style={closeBtnStyle}>✕</button>
         </div>
 
+        {/* show message if no workouts, otherwise loop through them */}
         {workouts.length === 0 ? (
           <p style={{ color: "#94a3b8", textAlign: "center" }}>No workouts logged yet.</p>
         ) : (
@@ -15,6 +18,7 @@ function PreviousWorkouts({ onClose, workouts }) {
               <p style={{ margin: 0, fontWeight: 700, fontSize: "14px", color: "#0f172a" }}>
                 {new Date(w.date).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
               </p>
+              {/* each workout has multiple exercises */}
               {w.exercises.map((ex, j) => (
                 <div key={j} style={{ margin: "8px 0", padding: "8px", background: "#f1f5f9", borderRadius: "8px" }}>
                   <p style={{ margin: 0, fontWeight: 600, fontSize: "13px", color: "#0f172a", textTransform: "capitalize" }}>
@@ -41,6 +45,7 @@ function PreviousWorkouts({ onClose, workouts }) {
   );
 }
 
+// styles
 const overlayStyle = {
   position: "fixed",
   inset: 0,

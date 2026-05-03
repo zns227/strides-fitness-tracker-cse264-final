@@ -1,26 +1,31 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+// Contact page - feedback form that sends data to our API
 function Contact() {
+    // state for each form field (ref: controlled components - Lecture 17)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [message, setMessage] = useState('')
+    const [type, setType] = useState('feedback')
     const [submitted, setSubmitted] = useState(false)
     const navigate = useNavigate()
 
+    // sends feedback to our Express backend using fetch (ref: Lecture 18 - useEffect/fetch pattern)
     const handleSubmit = async (e) => {
     e.preventDefault()
     try {
         const res = await fetch('http://localhost:3000/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, type: document.querySelector('select').value, message })
+        body: JSON.stringify({ name, email, type, message })
         })
         if (res.ok) {
         setSubmitted(true)
         setName('')
         setEmail('')
         setMessage('')
+        setType('feedback')
         }
     } catch (err) {
         console.error('Feedback error:', err)
@@ -39,6 +44,7 @@ function Contact() {
 
         <div style={contentStyle}>
         <div style={cardStyle}>
+            {/* conditional rendering - show thank you message or the form */}
             {submitted ? (
             <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>✓</div>
@@ -72,7 +78,12 @@ function Contact() {
                 </div>
                 <div>
                 <label style={formLabelStyle}>Type</label>
-                <select style={inputStyle} defaultValue="feedback">
+                {/* select is controlled with useState just like the other inputs */}
+                <select
+                    style={inputStyle}
+                    value={type}
+                    onChange={e => setType(e.target.value)}
+                >
                     <option value="feedback">General Feedback</option>
                     <option value="bug">Bug Report</option>
                     <option value="feature">Feature Request</option>
@@ -95,6 +106,7 @@ function Contact() {
             )}
         </div>
 
+        {/* side card with contact info */}
         <div style={infoCardStyle}>
             <h3 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>Get in Touch</h3>
             <div style={infoRowStyle}>
@@ -114,6 +126,7 @@ function Contact() {
     </div>
     )
     }
+    // styles
 
     const pageStyle = {
     minHeight: '100vh',
@@ -194,7 +207,8 @@ function Contact() {
     fontSize: '14px',
     boxSizing: 'border-box',
     fontFamily: 'inherit',
-    background: "white", color: "#94a3b8"
+    background: "white",
+    color: "#0f172a"
     }
 
     const submitBtnStyle = {

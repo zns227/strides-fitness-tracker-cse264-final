@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+// Profile page - shows account info, role switching, and password change
 function Profile({ user, setUser }) {
   const [profile, setProfile] = useState(null)
   const [currentPassword, setCurrentPassword] = useState('')
@@ -11,6 +12,7 @@ function Profile({ user, setUser }) {
   const [roleMsg, setRoleMsg] = useState('')
   const navigate = useNavigate()
 
+  // fetch user profile data on mount
   useEffect(() => {
     const token = localStorage.getItem('token')
     fetch('http://localhost:3000/api/auth/me', {
@@ -21,6 +23,7 @@ function Profile({ user, setUser }) {
       .catch(err => console.error(err))
   }, [])
 
+  // handles password change with validation
   const handlePasswordChange = async (e) => {
     e.preventDefault()
     setPasswordMsg('')
@@ -61,6 +64,7 @@ function Profile({ user, setUser }) {
     }
   }
 
+  // lets users switch between beginner and expert
   const handleRoleSwitch = async () => {
     const newRole = profile.role === 'beginner' ? 'expert' : 'beginner'
     const token = localStorage.getItem('token')
@@ -76,12 +80,14 @@ function Profile({ user, setUser }) {
     const data = await res.json()
 
     if (res.ok) {
+      // update both local profile state and parent App state
       setProfile({ ...profile, role: newRole })
       setUser({ ...user, role: newRole })
       setRoleMsg(`Switched to ${newRole}`)
     }
   }
 
+  // show loading while profile data is being fetched
   if (!profile) return <div style={pageStyle}><p>Loading...</p></div>
 
   const memberSince = new Date(profile.createdAt).toLocaleDateString('en-US', {
@@ -90,7 +96,7 @@ function Profile({ user, setUser }) {
 
   return (
     <div style={pageStyle}>
-      {/* Header */}
+      {/* header */}
       <div style={headerStyle}>
         <div>
           <p style={labelStyle}>Profile</p>
@@ -98,7 +104,9 @@ function Profile({ user, setUser }) {
         </div>
         <button onClick={() => navigate('/dashboard')} style={backBtnStyle}>← Back to Dashboard</button>
       </div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+
+      {/* avatar with user's initials */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
         <div style={{
             width: '80px',
             height: '80px',
@@ -111,12 +119,12 @@ function Profile({ user, setUser }) {
             fontWeight: 700,
             color: 'white'
         }}>
-        {profile.name?.split(' ').map(n => n[0]).join('').toUpperCase()}
-    </div>
-    </div>
+          {profile.name?.split(' ').map(n => n[0]).join('').toUpperCase()}
+        </div>
+      </div>
 
       <div style={gridStyle}>
-        {/* Account Info Card */}
+        {/* account info card */}
         <div style={{ ...cardStyle, minHeight: '250px' }}>
           <h3 style={cardTitleStyle}>Account Info</h3>
           <div style={infoRowStyle}>
@@ -137,7 +145,7 @@ function Profile({ user, setUser }) {
           </div>
         </div>
 
-        {/* Role Card */}
+        {/* role card - lets user switch between beginner and expert */}
         <div style={{ ...cardStyle, minHeight: '250px' }}>
           <h3 style={cardTitleStyle}>Fitness Level</h3>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
@@ -163,7 +171,7 @@ function Profile({ user, setUser }) {
           {roleMsg && <p style={{ marginTop: '8px', fontSize: '13px', color: '#10b981' }}>{roleMsg}</p>}
         </div>
 
-        {/* Change Password Card */}
+        {/* change password card */}
         <div style={{ ...cardStyle, gridColumn: '1 / -1' }}>
           <h3 style={cardTitleStyle}>Change Password</h3>
           <form onSubmit={handlePasswordChange} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px' }}>
@@ -213,6 +221,7 @@ function Profile({ user, setUser }) {
   )
 }
 
+// styles
 const pageStyle = {
   width: '100%',
   padding: '20px',
@@ -247,7 +256,7 @@ const backBtnStyle = {
   padding: "10px 20px",
   borderRadius: "10px",
   border: "none",
-  background: 'linear-gradient(135deg, #0ea5e9, #0284c7',
+  background: "linear-gradient(135deg, #0ea5e9, #0284c7)",
   color: "white",
   fontSize: "14px",
   fontWeight: 600,

@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
 
+// LogWorkout modal - lets users pick exercises and log their workout
+// this component uses the ExerciseDB external API
+// project requirement - "External REST API"
 function LogWorkout({ onClose, user }) {
+  // all exercises fetched from ExerciseDB
   const [allExercises, setAllExercises] = useState([]);
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [sets, setSets] = useState("");
   const [reps, setReps] = useState("");
   const [duration, setDuration] = useState("");
+  // exercises the user has added to this workout
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [notes, setNotes] = useState("");
 
+  // fetch exercises from ExerciseDB when the modal opens
   useEffect(() => {
       fetch("https://oss.exercisedb.dev/api/v1/exercises?limit=200")
         .then(res => res.json())
         .then(data => {
-          console.log("full response:", data)
-          console.log("sample exercise:", data.data?.[0])
           setAllExercises(data.data || []);
           setLoading(false);
         })
@@ -26,17 +30,12 @@ function LogWorkout({ onClose, user }) {
         });
     }, []);
 
+  // adds the selected exercise to the workout list
   const handleAddExercise = () => {
-    console.log("selectedExercise:", selectedExercise);
-    console.log("found:", allExercises.find(e => String(e.id) === String(selectedExercise)));
     if (!selectedExercise) return;
 
     const exercise = allExercises.find(e => e.name === selectedExercise);
-    console.log("exercise object:", exercise);
     if (!exercise) return;
-
-    const bp = exercise.bodyParts?.[0]
-    console.log("bodyPart value:", bp)
 
     setExercises(prev => [
       ...prev,
@@ -49,17 +48,20 @@ function LogWorkout({ onClose, user }) {
         }
     ]);
 
-    // reset fields
+    // reset fields after adding
     setSelectedExercise(null);
     setSets("");
     setReps("");
     setDuration("");
   };
 
+  // removes an exercise from the list by index
   const handleRemoveExercise = (index) => {
     setExercises(prev => prev.filter((_, i) => i !== index));
   };
 
+  // saves the workout to our Express backend
+  // ref: Lecture 24
   const handleSubmit = async () => {
     if (exercises.length === 0) return
     setSubmitting(true)
@@ -71,13 +73,14 @@ function LogWorkout({ onClose, user }) {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         exercises,
         notes
       })
     })
 
     setSubmitting(false)
+    // calls onClose which also re-fetches dashboard data
     onClose()
   }
 
@@ -93,7 +96,7 @@ function LogWorkout({ onClose, user }) {
           <p>Loading exercises...</p>
         ) : (
           <>
-            {/* EXERCISE PICKER */}
+            {/* exercise picker dropdown */}
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "15px" }}>
                 <select
                     value={selectedExercise || ""}
@@ -108,7 +111,7 @@ function LogWorkout({ onClose, user }) {
                     ))}
                 </select>
 
-                {/* GIF PREVIEW AND INSTRUCTIONS FOR BEGINNERS FROM EXERCISE DB */}
+                {/* gif preview and instructions from ExerciseDB */}
                 {selectedExercise && (() => {
                   const exercise = allExercises.find(e => e.name === selectedExercise);
                   return exercise ? (
@@ -125,7 +128,7 @@ function LogWorkout({ onClose, user }) {
                         </div>
                       </div>
 
-                      {/* instructions for beginners only */}
+                      {/* beginners see step-by-step instructions */}
                       {user?.role === "beginner" && exercise.instructions?.length > 0 && (
                         <ol style={{ margin: "12px 0 0", paddingLeft: "18px", fontSize: "13px", color: "#374151", lineHeight: 1.6 }}>
                           {exercise.instructions.map((step, i) => (
@@ -137,6 +140,7 @@ function LogWorkout({ onClose, user }) {
                   ) : null;
                 })()}
 
+              {/* sets, reps, duration inputs */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
                 <input
                   type="number"
@@ -169,7 +173,7 @@ function LogWorkout({ onClose, user }) {
               </button>
             </div>
 
-            {/* ADDED EXERCISES LIST */}
+            {/* list of exercises added so far */}
             {exercises.length > 0 && (
               <div style={{ marginBottom: "20px" }}>
                 <h4 style={{ marginBottom: "10px", color: "#0f172a" }}>Exercises in this workout:</h4>
@@ -190,7 +194,7 @@ function LogWorkout({ onClose, user }) {
               </div>
             )}
 
-            {/* Notes ui */}
+            {/* notes */}
             <div style={{ marginBottom: "20px" }}>
               <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600, color: "#0f172a" }}>
                 Workout Notes
@@ -203,6 +207,7 @@ function LogWorkout({ onClose, user }) {
               />
             </div>
 
+            {/* submit button - disabled if no exercises added */}
             <button
               onClick={handleSubmit}
               disabled={exercises.length === 0 || submitting}
@@ -220,6 +225,7 @@ function LogWorkout({ onClose, user }) {
   );
 }
 
+// styles
 const overlayStyle = {
   position: "fixed",
   inset: 0,

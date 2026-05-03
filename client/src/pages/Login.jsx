@@ -2,8 +2,13 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../App.css'
 
+// Login and Register page - handles both forms in one component
+// ref: Lecture 24 (Oauth example), https://dev.to/fredabod/authentication-signup-and-login-with-expressmongodb-and-jwt-2n64
 function Login({ setUser }) {
+  // toggles between login and register mode
   const [isRegister, setIsRegister] = useState(false)
+
+  // form field state - each input is a controlled component
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
@@ -12,15 +17,19 @@ function Login({ setUser }) {
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
+  // handles login or register depending on which mode we're in
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // pick the right endpoint and body based on login vs register
     const endpoint = isRegister ? '/register' : '/login'
     const body = isRegister ? { name, username, email, password, role } : { email, password }
 
+    // validation
     if (isRegister && password.length < 6) {
       return setError('Password must be at least 6 characters')
     }
-    
+
     try {
       const res = await fetch(`http://localhost:3000/api/auth${endpoint}`, {
         method: 'POST',
@@ -30,7 +39,11 @@ function Login({ setUser }) {
       const data = await res.json()
       if (!res.ok) return setError(data.message)
 
+      // save the JWT token so we can use it for future API calls
+      // ref: Lecture 22
       localStorage.setItem('token', data.token)
+
+      // pass user data up to App.jsx via the setUser prop
       setUser(data.user)
       navigate('/dashboard')
     } catch (err) {
@@ -50,6 +63,7 @@ function Login({ setUser }) {
         <h2>{isRegister ? 'Create Account' : 'Welcome Back'}</h2>
         {error && <p className="error">{error}</p>}
         <form onSubmit={handleSubmit}>
+          {/* these fields only show up when registering */}
           {isRegister && (
             <div className="form-group">
               <label>First Name</label>
@@ -70,6 +84,7 @@ function Login({ setUser }) {
             <label>Password</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" />
           </div>
+          {/* role select - this is how we handle the "User Accounts & Roles" project requirement */}
           {isRegister && (
             <div className="form-group">
               <label>I am a...</label>
@@ -83,6 +98,7 @@ function Login({ setUser }) {
             {isRegister ? 'Create Account' : 'Log In'}
           </button>
         </form>
+        {/* toggle between login and register */}
         <p className="toggle-text">
           {isRegister ? 'Already have an account? ' : "Don't have an account? "}
           <button className="toggle-btn" onClick={() => { setIsRegister(!isRegister); setError('') }}>

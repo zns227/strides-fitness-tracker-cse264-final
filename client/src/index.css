@@ -1,3 +1,4 @@
+/* global styles and resets - applies to every page in the app */
 html, body, #root {
   min-height: 100%;
   margin: 0;
